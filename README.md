@@ -1,9 +1,7 @@
 BadWordFilter
 =============
 
-[![Build Status](https://travis-ci.org/jcrowe206/BadWordFilter.svg?branch=master)](https://travis-ci.org/jcrowe206/BadWordFilter) [![Coverage Status](https://coveralls.io/repos/jcrowe206/BadWordFilter/badge.svg?branch=v2.1.2&service=github)](https://coveralls.io/github/jcrowe206/BadWordFilter?branch=v2.1.2)
-
-A bad word filter for php. Pass in a string or multidimensional array to check for the existence of a predefined list of bad words.
+A bad word filter for dependency free PHP. Pass in a string or multidimensional array to check for the existence of a predefined list of bad words.
 Use the list that ships with the application or define your own custom blacklist. BadWordFilter only matches whole words (excluding symbols)
 and not partial words. This will match:
 
@@ -29,8 +27,8 @@ var_dump($clean);
 
 1) add the following to your composer.json file:
 
-```javascript
-"jcrowe/bad-word-filter": "2.2.*"
+```
+"orionstar/bad-word-filter": "3.*"
 ```
 
 2) Run composer install
@@ -39,23 +37,11 @@ var_dump($clean);
 composer install
 ```
 
-3) Add BadWordFilter to your providers array and create an alias to the facade in app.php
-
+3) Add BadWordFilter to your use list
 
 ```php
-$providers = array(
-   ...
-   ...
-   'JCrowe\BadWordFilter\Providers\BadWordFilterServiceProvider',
-),
-
-$aliases = array(
-    ...
-    ...
-    'BadWordFilter'	  => 'JCrowe\BadWordFilter\Facades\BadWordFilter',
-),
+use orionstar\BadWordFilter\BadWordFilter;
 ```
-
 
 4) start cleaning your inputs~
 
@@ -72,15 +58,14 @@ storing to a database or displaying to the client.</strong>
 
 <h3>Settings options</h3>
 
-BadWordFilter takes 4 options:
+BadWordFilter takes 3 options:
 
 ```php
-$options = array(
-    'source' => 'file',
-    'source_file' => __DIR__ . '/bad_words.php',
-    'strictness' => 'very_strict',
-    'also_check' => array(),
-);
+$options = [
+    'source'        => 'file',
+    'source_file'   => __DIR__ . '/bad_words.php',
+    'also_check'    => [],
+];
 ```
 
 <h6>Source Types</h6>
@@ -88,41 +73,23 @@ $options = array(
 <strong>File</strong>
 
 If you specify a source type of "file" you must also specify a source_file or use the default source file included with this package.
-The Source File must return an array of words to check for. If you wish to specify strictness level in your custom bad words list simply
-split your array into sub keys of 'permissive', 'lenient', 'strict', 'very_strict', 'strictest', 'misspellings'
+The Source File must return an array of words to check for.
 
 <strong>Array</strong>
 
 If you specify a source type of "array" you must also specify a "bad_words_array" key that contains a list of words to check for.
-
-<h6>Strictness</h6>
-
-Available options are:
-"permissive",
-"lenient",
-"strict",
-"very_strict",
-"strictest",
-"misspellings"
-
-Where permissive will allow all but the worst of words through and strictest will attempt to flag even the most G rated words.
-Mispellings will also check for common misspellings and/or leet-speak. A full list of words can be seen in the src/config/bad_words.php file in this repo.
-
-
 <h6>Also Check</h6>
 
 In addition to the default list specified in the config file or array you can also pass in an "also_check" key that contains an array of words
 to flag.
-
-
 
 <h3>Overriding Defaults</h3>
 
 You can override the default settings in the constructor if using the class as an instance, or as an optional parameter in the static method call
 
 ```php
-$myOptions = array('strictness' => 'permissive', 'also_check' => array('foobar'));
-$filter = new \JCrowe\BadWordFilter\BadWordFilter($myOptions);
+$myOptions = ['also_check' => ['foobar']];
+$filter = new \orionstar\BadWordFilter\BadWordFilter($myOptions);
 
 $cleanString = $filter->clean('Why did you FooBar my application?');
 var_dump($cleanString);
@@ -138,7 +105,7 @@ By default bad words will be replaced with the first letter followed by the requ
 This can be changed to be replaced with a set string by passing the new string as an argument to the "clean" method
 
 ```php
-$myOptions = array('also_check' => array('cheesy'));
+$myOptions = ['also_check' => ['cheesy']];
 $cleanString = BadWordFilter::clean("my cheesy string", '#!%^", $myOptions);
 var_dump($cleanString);
 // output: "my #!%^ string"
@@ -147,8 +114,8 @@ var_dump($cleanString);
 or
 
 ```php
-$myOptions = array('also_check' => array('cheesy'));
-$filter = new \JCrowe\BadWordFilter\BadWordFilter($myOptions);
+$myOptions = ['also_check' => ['cheesy']];
+$filter = new \orionstar\BadWordFilter\BadWordFilter($myOptions);
 $cleanString = $filter->clean("my cheesy string", "#!$%");
 var_dump($cleanString);
 // output: "my #!$% string"
@@ -157,8 +124,8 @@ var_dump($cleanString);
 In case you want to keep bad word and surround it by anything (ex. html tag):
 
 ```php
-$myOptions = array('also_check' => array('cheesy'));
-$filter = new \JCrowe\BadWordFilter\BadWordFilter($myOptions);
+$myOptions = ['also_check' => ['cheesy']];
+$filter = new \orionstar\BadWordFilter\BadWordFilter($myOptions);
 $cleanString = $filter->clean("my cheesy string", '<span style="color: red;">$0</span>');
 var_dump($cleanString);
 // output: "my <span style="color: red;">cheesy</span> string"
@@ -179,9 +146,10 @@ Return:
 Usage:
 
 ```php
-$filter = new \JCrowe\BadWordFilter\BadWordFilter();
+$filter = new \orionstar\BadWordFilter\BadWordFilter();
 
-if ($filter->isDirty(array('this is a dirty string')) {
+if ($filter->isDirty(['this is a dirty string'])
+{
     /// do something
 }
 ```
@@ -202,7 +170,7 @@ Return:
 
 Usage:
 ```php
-$filter = new \JCrowe\BadWordFilter\BadWordFilter();
+$filter = new \orionstar\BadWordFilter\BadWordFilter();
 $string = "this really bad string";
 $cleanString = $filter->clean($string);
 ```
@@ -241,7 +209,7 @@ Return:
 Usage:
 
 ```php
-$filter = new \JCrowe\BadWordFilter\BadWordFilter();
+$filter = new \orionstar\BadWordFilter\BadWordFilter();
 if ($badWords = $filter->getDirtyWordsFromString("this really bad string")) {
     echo "You said these bad words: " . implode("<br />", $badWords);
 }
@@ -259,20 +227,20 @@ Return:
 Usage:
 
 ```php
-$arrayToCheck = array(
-    'first' => array(
-        'bad' => array(
+$arrayToCheck = [
+    'first' => [
+        'bad' => [
             'a' => 'This is a bad string!',
             'b' => 'This is a good string!',
-        ),
-    ),
+        ],
+    ],
     'second' => 'bad bad bad string!',
-);
+];
 
-$filter = new \JCrowe\BadWordFilter\BadWordFilter();
+$filter = new \orionstar\BadWordFilter\BadWordFilter();
 
-if ($badKeys = $filter->getDirtyKeysFromArray($arrayToCheck)) {
-
+if($badKeys = $filter->getDirtyKeysFromArray($arrayToCheck))
+{
     var_dump($badKeys);
     /* output:
 
