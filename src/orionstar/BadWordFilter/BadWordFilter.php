@@ -30,13 +30,15 @@ class BadWordFilter {
 
     /**
      * The start of the regex we will build to check for bad word matches
+     * Match for only the whole substring
      */
-    protected string $regexStart = '/\b([-!$%^&*()_+|~=`{}\[\]:";\'?,.\/])?';
+    protected string $regexStart = '/';
 
     /**
      * The end of the regex we ill build to check for bad word matches
+     * Match for only the whole substring
      */
-    protected string $regexEnd = '([-!$%^&*()_+|~=`{}\[\]:\";\'?,.\/])?\b/iu';
+    protected string $regexEnd = '/iu';
 
     /**
      * Create the object and set up the bad words list and
@@ -47,8 +49,8 @@ class BadWordFilter {
     {
         $this->defaults = include __DIR__ . '/../../config/config.php';
 
-        if ($this->hasAlternateSource($options) || $this->hasAlternateSourceFile($options)) {
-
+        if ($this->hasAlternateSource($options) || $this->hasAlternateSourceFile($options))
+		{
             $this->isUsingCustomDefinedWordList = true;
         }
 
@@ -105,7 +107,7 @@ class BadWordFilter {
 		{
             $word = preg_quote($word, null);
 
-            if (preg_match($this->buildRegex($word), $string, $matchedString))
+            if(preg_match($this->buildRegex($word), $string, $matchedString))
 			{
                 $badWords[] = $matchedString[0];
             }
@@ -227,18 +229,18 @@ class BadWordFilter {
 
             if($replaceWith === '*')
 			{
-                $fc = $word[0];
-                $lc = $word[strlen($word) - 1];
+                $first_char = $word[0];
+                $last_char = $word[strlen($word) - 1];
                 $len = strlen($word);
 
-                $newWord = $len > 3 ? $fc . str_repeat('*', $len - 2) . $lc : $fc . '**';
+                $newWord = $len > 3 ? $first_char . str_repeat('*', $len - 2) . $last_char : $first_char . '**';
             }
 			else
 			{
                 $newWord = $replaceWith;
             }
 
-            $string = preg_replace("/$word/", $newWord, $string);
+            $string = preg_replace("/$word/iu", $newWord, $string);
         }
 
         return $string;
@@ -351,7 +353,7 @@ class BadWordFilter {
      */
     protected function flattenArray(array $array): array
     {
-       	$objTmp = (object)['aFlat' => []];
+       	$objTmp = (object) ['aFlat' => []];
 
         $callBack = static function(&$v, $k, &$t) {
 	        $t->aFlat[] = $v;

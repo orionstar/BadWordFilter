@@ -65,7 +65,7 @@ class BadWordFilterTest extends TestCase {
     public function testPartialMatchesDontGetCleaned(): void
     {
         $filter = new BadWordFilter();
-        $myString = 'I am an ASSociative professor';
+        $myString = 'I am an A**ociative professor';
 
         static::assertEquals($myString, $filter->clean($myString));
     }
@@ -79,6 +79,7 @@ class BadWordFilterTest extends TestCase {
 
         static::assertFalse($filter->isDirty('my very clean string'));
         static::assertTrue($filter->isDirty('my very fucking dirty string'));
+        static::assertTrue($filter->isDirty('hatakshit'));
     }
 
     /**
@@ -88,13 +89,18 @@ class BadWordFilterTest extends TestCase {
     {
         $filter = new BadWordFilter();
 
-        static::assertEquals([
+        static::assertEqualsCanonicalizing([
+            'fuck',
+            'fuckin',
             'fucking',
         ], $filter->getDirtyWordsFromString('my very fucking dirty string'));
 
-        static::assertEquals([
+        static::assertEqualsCanonicalizing([
+            'fuck',
+            'fuckin',
             'fucking',
-            'shitty'
+	        'shit',
+            'shitty',
         ], $filter->getDirtyWordsFromString('my very fucking shitty dirty string'));
     }
 
