@@ -334,9 +334,7 @@ class BadWordFilter {
     }
 
     /**
-     * Get the bad words from the array in the confi
-     *
-     * @throws \Exception
+     * Get the bad words from the array in the config
      */
     protected function getBadWordsFromArray(): array
     {
@@ -345,7 +343,7 @@ class BadWordFilter {
             return $this->config['bad_words_array'];
         }
 
-        throw new RuntimeException('Source is set to "array" but bad_words_array is either empty or not an array.');
+		return [];
     }
 
     /**

@@ -71,6 +71,19 @@ class BadWordFilterTest extends TestCase {
     }
 
     /**
+     * If empty bad word list is used then the result have to be considered clean!
+     */
+    public function testResultOnEmptyBadWordList(): void
+    {
+        $filter = new BadWordFilter([
+			'source'          => 'array',
+			'bad_words_array' => [],
+		]);
+
+        static::assertFalse($filter->isDirty('shit'), 'Result shouldn\'t be dirty if bad word list is non empty!');
+    }
+
+    /**
      * Should be able to determine if a string has filth in it
      */
     public function testIsDirtyFindsDirtyString(): void
