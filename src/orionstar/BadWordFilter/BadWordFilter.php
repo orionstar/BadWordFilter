@@ -285,7 +285,7 @@ class BadWordFilter {
                 break;
 
             default:
-                throw new RuntimeException('Config source was not a valid type. Valid types are: file, cache');
+                throw new RuntimeException('Config source was not a valid type. Valid types are: file, array');
         }
 
         if ( ! empty($this->config['also_check']))

@@ -125,9 +125,9 @@ class BadWordFilterTest extends TestCase {
         $filter = new BadWordFilter();
 
         static::assertEquals([
-                '1',
-                '2',
-                'filth',
+	        '1',
+	        '2',
+	        'filth',
         ], $filter->getDirtyKeysFromArray(['this is a clean string', 'this shit is dirty', 'fuck yo couch', 'actually that is a nice couch!', 'filth' => 'another shitty string']));
     }
 
