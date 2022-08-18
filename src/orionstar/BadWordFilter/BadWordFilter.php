@@ -57,6 +57,7 @@ class BadWordFilter {
         $this->config = array_merge($this->defaults, $options);
 
         $this->getBadWords();
+		$this->cleanBadWordList();
     }
 
     /**
@@ -361,6 +362,24 @@ class BadWordFilter {
 
         return $objTmp->aFlat;
     }
+
+	/*
+	 * Remove empty items from bad word list
+	 */
+	protected function cleanBadWordList(): void
+	{
+		$bad_words_array = [];
+
+		foreach($this->badWords as $item)
+		{
+			if($item)
+			{
+				$bad_words_array[] = $item;
+			}
+		}
+
+		$this->badWords = $bad_words_array;
+	}
 
     protected function hasAlternateSource(array $options): bool
     {
